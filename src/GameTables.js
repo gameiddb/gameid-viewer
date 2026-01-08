@@ -16,6 +16,7 @@ import {
   Checkbox,
   TableContainer,
   Paper,
+  useTheme,
 } from '@mui/material';
 import { ResizableBox } from 'react-resizable';
 import 'react-resizable/css/styles.css';
@@ -43,6 +44,7 @@ const MAX_COL_WIDTH = 1200;
 const DEFAULT_COL_WIDTH = 180;
 
 function GameTables() {
+  const theme = useTheme();
   const [selectedFile, setSelectedFile] = useState('');
   const [data, setData] = useState([]);
   const [search, setSearch] = useState('');
@@ -57,7 +59,7 @@ function GameTables() {
   const headerRefs = useRef({});
 
   useEffect(() => {
-    if (!selectedFile) {
+    if (! selectedFile) {
       setData([]);
       setColumns([]);
       return;
@@ -175,13 +177,13 @@ function GameTables() {
             style={{
               position: "absolute",
               right: 0,
-              top:  0,
+              top: 0,
               height: "100%",
               width: "12px",
               cursor: "col-resize",
               zIndex: 1,
               backgroundColor: "#1976d2",
-              opacity: 0.6,
+              opacity:  0.6,
             }}
             onDoubleClick={e => {
               e.stopPropagation();
@@ -228,6 +230,15 @@ function GameTables() {
     return cellRefs.current[col][i];
   };
 
+  // Determine header background color based on theme
+  const headerBgColor = theme.palette.mode === 'dark' 
+    ? theme.palette.background.paper 
+    : theme.palette.grey[100];
+  
+  const headerTextColor = theme.palette.mode === 'dark' 
+    ? theme.palette.text.primary 
+    : theme.palette.text.primary;
+
   return (
     <div>
       <h2>Select CSV List</h2>
@@ -250,13 +261,13 @@ function GameTables() {
         onChange={e => setSearch(e.target.value)}
         size="small"
         style={{ marginLeft: 16, minWidth: 220 }}
-        disabled={!selectedFile}
+        disabled={! selectedFile}
       />
       <Button
         variant="contained"
         onClick={handleExport}
         style={{ marginLeft: 16 }}
-        disabled={!selectedFile || ! filteredData.length}
+        disabled={!selectedFile || !filteredData.length}
       >
         Export to CSV
       </Button>
@@ -272,9 +283,9 @@ function GameTables() {
         open={Boolean(anchorEl)}
         anchorEl={anchorEl}
         onClose={() => setAnchorEl(null)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        anchorOrigin={{ vertical: 'bottom', horizontal:  'left' }}
       >
-        <FormGroup style={{ padding:  16 }}>
+        <FormGroup style={{ padding: 16 }}>
           {columns.map(column => (
             <FormControlLabel
               key={column}
@@ -307,7 +318,7 @@ function GameTables() {
         {selectedFile && columns.length > 0 && (
           <Table stickyHeader size="small">
             <TableHead>
-              <TableRow style={{ position: 'sticky', top: 0, zIndex: 100 }}>
+              <TableRow style={{ position: 'sticky', top: 0, zIndex:  100 }}>
                 {columns.filter(key => visibleColumns[key]).map(key => (
                   <TableCell
                     key={key}
@@ -316,9 +327,10 @@ function GameTables() {
                       minWidth: MIN_COL_WIDTH,
                       paddingRight:  0,
                       position:  "sticky",
-                      top: 0,
+                      top:  0,
                       zIndex: 100,
-                      backgroundColor: '#f5f5f5',
+                      backgroundColor: headerBgColor,
+                      color: headerTextColor,
                       fontWeight: 'bold'
                     }}
                   >
@@ -340,7 +352,7 @@ function GameTables() {
                         width: colWidths[key] || DEFAULT_COL_WIDTH,
                         minWidth: MIN_COL_WIDTH,
                         maxWidth: MAX_COL_WIDTH,
-                        padding:  "8px",
+                        padding: "8px",
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
                         whiteSpace: 'normal',
